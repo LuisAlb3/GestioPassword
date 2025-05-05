@@ -4,20 +4,23 @@ import string
 import re
 import hashlib
 import requests
+import os
 
 app = Flask(__name__)
 
-# Leer el HTML desde el archivo plano (fuera de templates/)
+# Cargar el HTML desde archivo plano
 def cargar_html():
     with open("index.html", "r", encoding="utf-8") as f:
         return f.read()
 
+# Generar contraseña segura
 def generar_contraseña(longitud=12):
     if longitud < 8:
         longitud = 8
     caracteres = string.ascii_letters + string.digits + string.punctuation
     return ''.join(random.choice(caracteres) for _ in range(longitud))
 
+# Evaluar estructura de seguridad
 def evaluar_seguridad(contraseña):
     criterios = {
         "longitud": len(contraseña) >= 8,
@@ -35,6 +38,7 @@ def evaluar_seguridad(contraseña):
         nivel = "Débil"
     return criterios, nivel
 
+# Verificar si la contraseña ha sido filtrada
 def verificar_fuga(contraseña):
     sha1 = hashlib.sha1(contraseña.encode('utf-8')).hexdigest().upper()
     prefijo = sha1[:5]
@@ -48,8 +52,8 @@ def verificar_fuga(contraseña):
     hashes = (line.split(":") for line in response.text.splitlines())
     for hash_sufijo, cantidad in hashes:
         if hash_sufijo == sufijo:
-            return f" Aparece en filtraciones: {cantidad} veces."
-    return " No aparece en filtraciones públicas."
+            return f"Aparece en filtraciones: {cantidad} veces."
+    return "No aparece en filtraciones públicas."
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -64,7 +68,7 @@ def index():
                 longitud = int(request.form.get("longitud", 12))
                 generada = generar_contraseña(longitud)
             except ValueError:
-                generada = "Error: longitud inválida."
+                generada = "Longitud inválida."
 
         elif "verificar" in request.form:
             contraseña = request.form.get("contraseña", "")
@@ -77,4 +81,5 @@ def index():
     return render_template_string(html, resultado=resultado, criterios=criterios, fuga=fuga, generada=generada)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)

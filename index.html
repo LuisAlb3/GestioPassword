@@ -4,36 +4,37 @@
     <meta charset="UTF-8">
     <title>Verificador de Contraseñas</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 30px; }
+        body { font-family: Arial, sans-serif; padding: 30px; max-width: 600px; margin: auto; }
         .resultado { margin-top: 20px; }
+        input, button { margin: 5px 0; padding: 5px; width: 100%; }
     </style>
 </head>
 <body>
-    <h1> Herramienta de Seguridad de Contraseñas</h1>
+    <h1>Herramienta de Seguridad de Contraseñas</h1>
 
     <form method="POST">
-        <h3> Generar una contraseña</h3>
+        <h3>1. Generar una contraseña</h3>
         <input type="number" name="longitud" placeholder="Longitud (mín. 8)" min="8">
         <button name="generar">Generar</button>
     </form>
 
     {% if generada %}
-        <p><strong> Generada:</strong> {{ generada }}</p>
+        <p><strong>Contraseña generada:</strong> {{ generada }}</p>
     {% endif %}
 
     <form method="POST">
-        <h3> Verificar una contraseña</h3>
+        <h3>2. Verificar una contraseña</h3>
         <input type="text" name="contraseña" placeholder="Escribe tu contraseña">
         <button name="verificar">Verificar</button>
     </form>
 
     {% if resultado %}
         <div class="resultado">
-            <h3> Resultado:</h3>
+            <h3>Resultado:</h3>
             <p>{{ resultado }}</p>
             <ul>
                 {% for crit, cumplido in criterios.items() %}
-                    <li>{{ "Su contraseñaes es SEGURA" if cumplido else "Su contraseña es INSEGURA" }} {{ crit.capitalize() }}</li>
+                    <li>{{ "Cumple" if cumplido else "No cumple" }}: {{ crit.capitalize() }}</li>
                 {% endfor %}
             </ul>
             <p>{{ fuga }}</p>
