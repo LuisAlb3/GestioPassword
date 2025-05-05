@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Verificador de Contraseñas</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; }
+        .resultado { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1> Herramienta de Seguridad de Contraseñas</h1>
+
+    <form method="POST">
+        <h3> Generar una contraseña</h3>
+        <input type="number" name="longitud" placeholder="Longitud (mín. 8)" min="8">
+        <button name="generar">Generar</button>
+    </form>
+
+    {% if generada %}
+        <p><strong> Generada:</strong> {{ generada }}</p>
+    {% endif %}
+
+    <form method="POST">
+        <h3> Verificar una contraseña</h3>
+        <input type="text" name="contraseña" placeholder="Escribe tu contraseña">
+        <button name="verificar">Verificar</button>
+    </form>
+
+    {% if resultado %}
+        <div class="resultado">
+            <h3> Resultado:</h3>
+            <p>{{ resultado }}</p>
+            <ul>
+                {% for crit, cumplido in criterios.items() %}
+                    <li>{{ "Su contraseñaes es SEGURA" if cumplido else "Su contraseña es INSEGURA" }} {{ crit.capitalize() }}</li>
+                {% endfor %}
+            </ul>
+            <p>{{ fuga }}</p>
+        </div>
+    {% endif %}
+</body>
+</html>
